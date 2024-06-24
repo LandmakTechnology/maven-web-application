@@ -20,7 +20,6 @@ pipeline{
       }
 }
     }
-/*
     stage('3.CodeQuality'){
       steps{
          //sh "mvn sonar:sonar"
