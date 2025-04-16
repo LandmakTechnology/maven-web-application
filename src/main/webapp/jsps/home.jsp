@@ -11,7 +11,7 @@
 <body>
 <h1 align="center">Welcome to Tesla Web application Project.</h1>
 <h1 align="center">Landmark Software Solutions (LSS)  are developing and supporting quality Software Solutions to millions of clients globally.
-	           We are raising billionaires IT professionals accross the nations of the World.
+	          Landmark Software Solutions are raising billionaires IT professionals accross the nations of the World.
 	Landmark Software Solutions (LSS) offers Training for DevOps with Linux, Kubernetes and Cloud, equipping IT Engineers for best performance.
         Landmark Technologies, the Pride of Africa.
 	Class39 DevOps MasterClass started on Feb 8, 2025.
