@@ -1,0 +1,95 @@
+pipeline {
+  agent any 
+
+  tools {
+    maven 'maven 3.9.9' // This should match the exact Maven name configured in Jenkins
+  }
+
+  environment {
+    MAVEN_OPTS = '-Dmaven.repo.local=.m2/repository'
+  }
+
+  stages {
+    stage('1GetCode') {
+      steps {
+        echo 'Cloning the latest application version'
+        git branch: 'feature', url: 'https://github.com/gozelah3/maven-web-application'
+      }
+    }
+
+    stage('3Test+Build') {
+      steps {
+        echo 'Running JUnit test cases'
+        echo 'Testing must pass to create artifacts'
+        sh 'mvn clean package'
+      }
+    }
+
+    stage('4CodeQuality') {
+      steps {
+        echo 'Performing Code Quality Analysis'
+        sh 'mvn sonar:sonar'
+      }
+    }
+
+    stage('5uploadNexus') {
+      steps {
+        withCredentials([usernamePassword(
+          credentialsId: 'nexus-creds-id', // Replace with your actual Jenkins credentials ID
+          usernameVariable: 'NEXUS_USER',
+          passwordVariable: 'NEXUS_PASS'
+        )]) {
+          writeFile file: 'settings.xml', text: """
+            <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                                          http://maven.apache.org/xsd/settings-1.0.0.xsd">
+              <servers>
+                <server>
+                  <id>nexus</id>
+                  <username>${env.NEXUS_USER}</username>
+                  <password>${env.NEXUS_PASS}</password>
+                </server>
+              </servers>
+            </settings>
+          """
+          sh 'mvn deploy --settings settings.xml'
+        }
+      }
+    }
+    stage('8deploy2prod') {
+       steps{
+        deploy adapters: [tomcat9(credentialsId: 'TomcatDomiCredentials', path: '', url: 'http://44.204.149.155:8080/')], contextPath: null, war: 'target/*war'
+      }
+    }
+  }
+
+  post {
+    always {
+      emailext body: '''Hey guys,
+Please check build status.
+
+Thanks,
+Landmark
++1 437 215 2483''', recipientProviders: [buildUser(), developers()], subject: 'Build Notification', to: 'boa-team@gmail.com'
+    }
+
+    success {
+      emailext body: '''Hey guys,
+Good job, build and deployment is successful.
+
+Thanks,
+Landmark
++1 437 215 2483''', recipientProviders: [buildUser(), developers()], subject: 'Build SUCCESS', to: 'paypal-team@gmail.com'
+    }
+
+    failure {
+      emailext body: '''Hey guys,
+Build failed. Please resolve issues.
+
+Thanks,
+Landmark
++1 404 453 4870''', recipientProviders: [buildUser(), developers()], subject: 'Build FAILED', to: 'paypal-team@gmail.com'
+    }
+  }
+}
