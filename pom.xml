@@ -60,7 +60,7 @@
 		</dependency>
 
 		<!-- compile dependencies -->
-
+<!-- compile dependencies -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
