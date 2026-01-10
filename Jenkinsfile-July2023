@@ -1,5 +1,5 @@
 node{
-  def mavenHome = tool name: 'maven3.8.2'
+  def mavenHome = tool name: 'maven3.6'
   stage('1Clone'){
     git 'https://github.com/LandmakTechnology/maven-web-application'
   }
@@ -14,8 +14,7 @@ node{
     sh "${mavenHome}/bin/mvn deploy"
   }
 
-  stage('5Deploy'){
-    deploy adapters: [tomcat9(credentialsId: 'tomcat-credentials', path: '', url: 'http://54.166.85.32:8177/')], contextPath: null, war: 'target/*war'
+  stage('5Deploy'){deploy adapters: [tomcat9(credentialsId: 'tomcat-credential', path: '', url: 'http://18.117.236.115:8177/')], contextPath: null, war: 'target/*war'
   }
   stage('6Notification'){
     emailext body: '''Hi Team,
