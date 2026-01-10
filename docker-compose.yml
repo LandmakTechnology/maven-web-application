@@ -4,7 +4,7 @@ services:
     image: mylandmarktech/maven-web-app:VERSION
     restart: always
     ports:
-    - 9090:8080
+    - 9191:8080
     networks:
     - mavenappbridge
 networks:
